@@ -64,7 +64,7 @@ END_MESSAGE_MAP()
 
 
 // SharkDllMenuDialog 消息处理程序
-CEdit* pBoxOne;
+CEdit* g_pBoxOne;
 
 void SharkDllMenuDialog::OnBnClickedOk()
 {
@@ -74,17 +74,17 @@ void SharkDllMenuDialog::OnBnClickedOk()
 
 	CreateThread(NULL, 0, LPTHREAD_START_ROUTINE(DlgThread), 0, 0, NULL);
 	//将编辑框保存到pBoxOne
-	pBoxOne = (CEdit*)sharkDialog->GetDlgItem(IDC_EDIT1);
+	g_pBoxOne = (CEdit*)sharkDialog->GetDlgItem(IDC_EDIT1);
 }
 
 //定义用于连接的字符串
-CString back_msg = NULL;
-CString back_split = CString(L"\r\n");
-CString back_msginfo = CString(L"撤回消息为:");
-CString back_tips = NULL;
+CString g_back_msg = NULL;
+CString g_back_split = CString(L"\r\n");
+CString g_back_msginfo = CString(L"撤回消息为:");
+CString g_back_tips = NULL;
 
 
-
+//业务逻辑代码
 void OnRevock(DWORD esp) {
 	wchar_t *tips = *(wchar_t **)(esp + 0x4);
 	wchar_t *msg = *(wchar_t **)(esp + 0x0);
@@ -104,19 +104,19 @@ void OnRevock(DWORD esp) {
 				return;
 			}
 			//排除重复的信息
-			if (back_msg == temp_msg && back_tips == temp_tip) {
+			if (g_back_msg == temp_msg && g_back_tips == temp_tip) {
 				return;
 			}
 			//下面就是以下字符串处理了
-			back_msg = CString(msg);
-			back_tips = CString(tips);
+			g_back_msg = CString(msg);
+			g_back_tips = CString(tips);
 
 			//设置信息
 			CString last_result;
-			pBoxOne->GetWindowText(last_result);
-			last_result = last_result + back_tips + back_split + back_msginfo + back_msg + back_split;
+			g_pBoxOne->GetWindowText(last_result);
+			last_result = last_result + g_back_tips + g_back_split + g_back_msginfo + g_back_msg + g_back_split;
 
-			pBoxOne->SetWindowText(last_result);
+			g_pBoxOne->SetWindowText(last_result);
 
 		}
 	}
